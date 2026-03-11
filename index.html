@@ -3,15 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Histoire du Raï</title>
+  <title>L'histoire du Raï</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+
+<section id="frames-grid">
+
+  <!-- FRAME 1 — texte -->
+  <article data-type="text" data-title="Bienvenue">
+    <h2>L'histoire du Raï</h2>
+    <p>
+      Ce site utilise MediaPipe pour détecter les mouvements de ta main
+      via la caméra. Swipe vers la gauche pour avancer, vers la droite
+      pour reculer. Aucun clic requis.
+    </p>
+  </article>
+
+  <!-- FRAME 2 — photo -->
+  <article data-type="photo" data-title="Une image">
+    <figure>
+      <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80"
+           alt="Montagne au coucher de soleil" />
+      <figcaption>Alpes suisses — Photo Unsplash</figcaption>
+    </figure>
+  </article>
+
+  <!-- FRAME 3 — citation -->
+  <article data-type="quote" data-title="Citation">
+    <blockquote>
+      Le mouvement est une porte vers la présence.
+      <cite>— Anonyme</cite>
+    </blockquote>
+  </article>
+
+  <!-- FRAME 4 — vidéo -->
+  <article data-type="video" data-title="Une vidéo">
+    <video controls>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+    </video>
+  </article>
+
+  <!-- FRAME 5 — audio -->
+  <article data-type="audio" data-title="Un son">
+    <div class="audio-card">
+      <span class="audio-icon">🎵</span>
+      <h3>SoundHelix — Song 1</h3>
+      <p>Exemple audio</p>
+      <audio controls src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </div>
+  </article>
+
+  <!-- FRAME 6 — texte -->
+  <article data-type="text" data-title="Personnalise !">
+    <h2>C'est tout !</h2>
+    <p>
+      Modifie les &lt;article&gt; dans index.html pour ajouter ton propre
+      contenu. Chaque article devient automatiquement une frame.
+    </p>
+  </article>
+
+</section>
+
+
+
 <!-- ─── START OVERLAY ─── -->
 <div id="startOverlay">
-  <h1>L'histoire <br><em>du Raï</em></h1>
-  <p>Activez la caméra pour commencer l'expérience. Naviguez entre les frames avec votre main </p>
+  <h1>Hand<br><em>Navigation</em></h1>
+  <p>Naviguez entre les frames avec votre main.<br>Activez la caméra pour commencer.</p>
   <button id="startBtn">Activer la caméra</button>
   <div class="instructions">
     <div class="instr-item">
@@ -32,62 +92,62 @@
   </div>
 </div>
 
-<!-- ─── HEADER ─── -->
-<header>
-  <div class="logo">✦ L'histoire du Raï</div>
-  <div class="nav-info" id="navInfo">— / —</div>
-  <div class="status-pill" id="statusPill">
-    <div class="status-dot"></div>
-    <span id="statusText">Caméra inactive</span>
-  </div>
-</header>
+<!-- ─── SHELL UI (généré par script.js) ─── -->
+<div id="shell">
 
-<!-- ─── PROGRESS BAR ─── -->
-<div class="progress-bar">
-  <div class="progress-fill" id="progressFill" style="width:0%"></div>
-</div>
+  <header id="topBar">
+    <div class="logo">✦ Frames</div>
+    <div class="nav-info" id="navInfo">— / —</div>
+    <div class="status-pill" id="statusPill">
+      <div class="status-dot"></div>
+      <span id="statusText">Caméra inactive</span>
+    </div>
+  </header>
 
-<!-- ─── MAIN ─── -->
-<main>
-  <div class="frames-wrapper" id="framesWrapper">
-    <!-- Les frames sont injectées par script.js -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
 
-  <aside class="sidebar">
-    <div class="cam-wrapper">
-      <video id="videoEl" playsinline autoplay muted></video>
-      <canvas id="overlayCanvas"></canvas>
+  <div id="layout">
+
+    <!-- zone d'affichage des frames -->
+    <div id="stageArea">
+      <!-- les articles sont déplacés ici par JS -->
     </div>
 
-    <div class="gesture-display">
-      <div class="gesture-name">Geste détecté</div>
-      <div class="gesture-value" id="gestureValue">—</div>
-    </div>
+    <!-- sidebar caméra + sommaire -->
+    <aside id="sidebar">
+      <div class="cam-wrapper">
+        <video id="videoEl" playsinline autoplay muted></video>
+        <canvas id="overlayCanvas"></canvas>
+      </div>
+      <div class="gesture-display">
+        <div class="gesture-name">Geste détecté</div>
+        <div class="gesture-value" id="gestureValue">—</div>
+      </div>
+      <div class="frame-list">
+        <div class="frame-list-title">Sommaire</div>
+        <div id="frameListItems"></div>
+      </div>
+    </aside>
 
-    <div class="frame-list">
-      <div class="frame-list-title">Sommaire</div>
-      <div id="frameListItems"></div>
-    </div>
-  </aside>
-</main>
+  </div><!-- /#layout -->
 
-<!-- ─── HINT BAR ─── -->
-<div class="hint-bar">
-  <span>👈 swipe gauche → suivant</span>
-  <span>👉 swipe droite → précédent</span>
-</div>
+  <footer class="hint-bar">
+    <span>👈 swipe gauche → suivant</span>
+    <span>👉 swipe droite → précédent</span>
+  </footer>
 
-<!-- ─── SWIPE INDICATORS ─── -->
-<div class="swipe-indicator left" id="indLeft">←</div>
+</div><!-- /#shell -->
+
+<!-- indicateurs de direction -->
+<div class="swipe-indicator left"  id="indLeft">←</div>
 <div class="swipe-indicator right" id="indRight">→</div>
 
-<!-- ─── MEDIAPIPE (chargé avant script.js) ─── -->
+<!-- ─── MEDIAPIPE ─── -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-
-<!-- ─── TON CODE ─── -->
 <script src="script.js"></script>
-
 </body>
 </html>

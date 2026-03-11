@@ -3,40 +3,52 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0a0a0f;
-  --fg: #f0ede6;
-  --accent: #c8a97e;
-  --dim: rgba(240,237,230,0.35);
-  --panel: rgba(255,255,255,0.04);
-  --radius: 20px;
-  --transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg:         #0a0a0f;
+  --fg:         #f0ede6;
+  --accent:     #c8a97e;
+  --dim:        rgba(240,237,230,0.35);
+  --panel:      rgba(255,255,255,0.04);
+  --border:     rgba(255,255,255,0.07);
+  --radius:     20px;
+  --sidebar-w:  280px;
+  --header-h:   58px;
+  --footer-h:   38px;
+  --progress-h: 2px;
+  --ease:       0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ── Hide raw content until JS moves it ── */
+#frames-grid { display: none; }
+
+/* ════════════════════════════
+   SHELL — CSS GRID layout
+   ════════════════════════════ */
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: 'DM Mono', monospace;
   height: 100vh;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-/* ─── HEADER ─── */
-header {
-  display: flex;
+#shell {
+  display: grid;
+  grid-template-rows: var(--header-h) var(--progress-h) 1fr var(--footer-h);
+  height: 100vh;
+}
+
+/* ── Header ── */
+#topBar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  padding: 18px 32px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  flex-shrink: 0;
-  z-index: 10;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
 }
 
 .logo {
   font-family: 'DM Serif Display', serif;
   font-size: 1.3rem;
-  letter-spacing: 0.02em;
   color: var(--accent);
 }
 
@@ -45,9 +57,9 @@ header {
   color: var(--dim);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  justify-self: center;
 }
 
-/* ─── STATUS PILL ─── */
 .status-pill {
   display: flex;
   align-items: center;
@@ -56,6 +68,7 @@ header {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
+  justify-self: end;
   transition: color 0.3s;
 }
 
@@ -66,7 +79,7 @@ header {
   transition: background 0.3s, box-shadow 0.3s;
 }
 
-.status-pill.active { color: var(--accent); }
+.status-pill.active            { color: var(--accent); }
 .status-pill.active .status-dot {
   background: var(--accent);
   box-shadow: 0 0 8px var(--accent);
@@ -75,25 +88,50 @@ header {
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50%       { opacity: 0.4; }
 }
 
-/* ─── MAIN LAYOUT ─── */
-main {
-  flex: 1;
+/* ── Progress bar ── */
+.progress-bar  { background: var(--border); }
+.progress-fill { height: 100%; background: var(--accent); transition: width var(--ease); }
+
+/* ── Main area: stage + sidebar ── */
+#layout {
   display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 0;
+  grid-template-columns: 1fr var(--sidebar-w);
   overflow: hidden;
 }
 
-/* ─── FRAMES AREA ─── */
-.frames-wrapper {
+/* ── Stage ── */
+#stageArea {
   position: relative;
   overflow: hidden;
 }
 
-.frame {
+/* ── Sidebar ── */
+#sidebar {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  border-left: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ── Footer hint bar ── */
+.hint-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  font-size: 0.62rem;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  border-top: 1px solid var(--border);
+}
+
+/* ════════════════════════════
+   FRAMES
+   ════════════════════════════ */
+article {
   position: absolute;
   inset: 0;
   display: flex;
@@ -103,21 +141,20 @@ main {
   padding: 48px;
   opacity: 0;
   transform: translateX(80px);
-  transition: opacity var(--transition), transform var(--transition);
+  transition: opacity var(--ease), transform var(--ease);
   pointer-events: none;
 }
 
-.frame.active {
+article.active {
   opacity: 1;
   transform: translateX(0);
   pointer-events: all;
 }
 
-.frame.exit-left {
-  opacity: 0;
-  transform: translateX(-80px);
-}
+article.exit-left  { opacity: 0; transform: translateX(-80px); }
+article.exit-right { opacity: 0; transform: translateX(80px); }
 
+/* frame label (injected by JS) */
 .frame-label {
   font-size: 0.6rem;
   letter-spacing: 0.2em;
@@ -127,10 +164,8 @@ main {
   align-self: flex-start;
 }
 
-/* ─── FRAME TYPES ─── */
-
-/* TEXT */
-.frame-text h2 {
+/* ── text ── */
+article[data-type="text"] h2 {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
   line-height: 1.2;
@@ -138,15 +173,15 @@ main {
   max-width: 620px;
 }
 
-.frame-text p {
+article[data-type="text"] p {
   font-size: 0.9rem;
   line-height: 1.8;
   color: var(--dim);
   max-width: 560px;
 }
 
-/* IMAGE */
-.frame-photo img {
+/* ── photo ── */
+article[data-type="photo"] img {
   max-width: 100%;
   max-height: 55vh;
   border-radius: var(--radius);
@@ -154,7 +189,7 @@ main {
   box-shadow: 0 32px 80px rgba(0,0,0,0.6);
 }
 
-.frame-photo figcaption {
+article[data-type="photo"] figcaption {
   margin-top: 16px;
   font-size: 0.72rem;
   color: var(--dim);
@@ -162,16 +197,16 @@ main {
   letter-spacing: 0.05em;
 }
 
-/* VIDEO */
-.frame-video video {
+/* ── video ── */
+article[data-type="video"] video {
   max-width: 100%;
   max-height: 55vh;
   border-radius: var(--radius);
   box-shadow: 0 32px 80px rgba(0,0,0,0.6);
 }
 
-/* AUDIO */
-.frame-audio .audio-card {
+/* ── audio ── */
+.audio-card {
   background: var(--panel);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius);
@@ -180,32 +215,28 @@ main {
   max-width: 480px;
 }
 
-.frame-audio .audio-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  display: block;
-}
+.audio-icon { font-size: 3rem; margin-bottom: 20px; display: block; }
 
-.frame-audio h3 {
+.audio-card h3 {
   font-family: 'DM Serif Display', serif;
   font-size: 1.6rem;
   margin-bottom: 8px;
 }
 
-.frame-audio p {
+.audio-card p {
   color: var(--dim);
   font-size: 0.8rem;
   margin-bottom: 24px;
 }
 
-.frame-audio audio {
+.audio-card audio {
   width: 100%;
   filter: invert(1) hue-rotate(180deg) brightness(0.85);
   border-radius: 8px;
 }
 
-/* QUOTE */
-.frame-quote blockquote {
+/* ── quote ── */
+article[data-type="quote"] blockquote {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(1.5rem, 3vw, 2.4rem);
   font-style: italic;
@@ -215,7 +246,7 @@ main {
   padding-left: 32px;
 }
 
-.frame-quote blockquote::before {
+article[data-type="quote"] blockquote::before {
   content: '"';
   position: absolute;
   left: -8px; top: -16px;
@@ -226,7 +257,7 @@ main {
   font-style: normal;
 }
 
-.frame-quote cite {
+article[data-type="quote"] cite {
   display: block;
   margin-top: 20px;
   font-size: 0.75rem;
@@ -236,19 +267,10 @@ main {
   text-transform: uppercase;
 }
 
-/* ─── SIDEBAR ─── */
-.sidebar {
-  border-left: 1px solid rgba(255,255,255,0.06);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Camera feed */
-.cam-wrapper {
-  position: relative;
-  flex-shrink: 0;
-}
+/* ════════════════════════════
+   SIDEBAR INTERNALS
+   ════════════════════════════ */
+.cam-wrapper { position: relative; }
 
 #videoEl {
   width: 100%;
@@ -265,11 +287,9 @@ main {
   transform: scaleX(-1);
 }
 
-/* Gesture feedback */
 .gesture-display {
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .gesture-name {
@@ -283,16 +303,13 @@ main {
 .gesture-value {
   font-family: 'DM Serif Display', serif;
   font-size: 1.1rem;
-  color: var(--fg);
   min-height: 1.5em;
   transition: color 0.2s;
 }
 
 .gesture-value.triggered { color: var(--accent); }
 
-/* Frame list / progress */
 .frame-list {
-  flex: 1;
   overflow-y: auto;
   padding: 16px;
   scrollbar-width: thin;
@@ -319,7 +336,7 @@ main {
   margin-bottom: 4px;
 }
 
-.frame-item:hover { background: var(--panel); }
+.frame-item:hover   { background: var(--panel); }
 .frame-item.current { background: rgba(200,169,126,0.1); }
 
 .frame-item-dot {
@@ -344,7 +361,6 @@ main {
 
 .frame-item-title {
   font-size: 0.78rem;
-  color: var(--fg);
   opacity: 0.7;
   white-space: nowrap;
   overflow: hidden;
@@ -353,23 +369,9 @@ main {
 
 .frame-item.current .frame-item-title { opacity: 1; }
 
-/* ─── GESTURE HINT ─── */
-.hint-bar {
-  padding: 10px 32px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  flex-shrink: 0;
-  font-size: 0.62rem;
-  color: var(--dim);
-  letter-spacing: 0.08em;
-}
-
-.hint-bar span { display: flex; align-items: center; gap: 6px; }
-
-/* ─── SWIPE ARROW INDICATOR ─── */
+/* ════════════════════════════
+   SWIPE INDICATORS
+   ════════════════════════════ */
 .swipe-indicator {
   position: fixed;
   top: 50%;
@@ -383,23 +385,12 @@ main {
 }
 
 .swipe-indicator.left  { left: 24px; }
-.swipe-indicator.right { right: 310px; }
+.swipe-indicator.right { right: calc(var(--sidebar-w) + 16px); }
 .swipe-indicator.show  { opacity: 0.8; }
 
-/* ─── PROGRESS BAR ─── */
-.progress-bar {
-  height: 2px;
-  background: rgba(255,255,255,0.06);
-  flex-shrink: 0;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  transition: width var(--transition);
-}
-
-/* ─── START OVERLAY ─── */
+/* ════════════════════════════
+   START OVERLAY
+   ════════════════════════════ */
 #startOverlay {
   position: fixed;
   inset: 0;
@@ -446,18 +437,18 @@ main {
 .instructions {
   margin-top: 40px;
   display: flex;
-  gap: 32px;
+  gap: 24px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .instr-item {
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 18px 24px;
   text-align: center;
-  min-width: 140px;
+  min-width: 130px;
 }
 
 .instr-icon  { font-size: 1.8rem; margin-bottom: 10px; }
