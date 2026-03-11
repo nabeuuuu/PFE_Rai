@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Histoire d Raï</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ─── START OVERLAY ─── -->
+<div id="startOverlay">
+  <h1>L'histoire <br><em>du Raï</em></h1>
+  <p>Activez la caméra pour commencer l'expérience. Naviguez entre les frames avec votre main </p>
+  <button id="startBtn">Activer la caméra</button>
+  <div class="instructions">
+    <div class="instr-item">
+      <div class="instr-icon">👈</div>
+      <div class="instr-label">Swipe gauche</div>
+      <div class="instr-desc">Frame suivante</div>
+    </div>
+    <div class="instr-item">
+      <div class="instr-icon">👉</div>
+      <div class="instr-label">Swipe droite</div>
+      <div class="instr-desc">Frame précédente</div>
+    </div>
+    <div class="instr-item">
+      <div class="instr-icon">✋</div>
+      <div class="instr-label">Main ouverte</div>
+      <div class="instr-desc">En attente</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="logo">✦ L'histoire du Raï</div>
+  <div class="nav-info" id="navInfo">— / —</div>
+  <div class="status-pill" id="statusPill">
+    <div class="status-dot"></div>
+    <span id="statusText">Caméra inactive</span>
+  </div>
+</header>
+
+<!-- ─── PROGRESS BAR ─── -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<main>
+  <div class="frames-wrapper" id="framesWrapper">
+    <!-- Les frames sont injectées par script.js -->
+  </div>
+
+  <aside class="sidebar">
+    <div class="cam-wrapper">
+      <video id="videoEl" playsinline autoplay muted></video>
+      <canvas id="overlayCanvas"></canvas>
+    </div>
+
+    <div class="gesture-display">
+      <div class="gesture-name">Geste détecté</div>
+      <div class="gesture-value" id="gestureValue">—</div>
+    </div>
+
+    <div class="frame-list">
+      <div class="frame-list-title">Sommaire</div>
+      <div id="frameListItems"></div>
+    </div>
+  </aside>
+</main>
+
+<!-- ─── HINT BAR ─── -->
+<div class="hint-bar">
+  <span>👈 swipe gauche → suivant</span>
+  <span>👉 swipe droite → précédent</span>
+</div>
+
+<!-- ─── SWIPE INDICATORS ─── -->
+<div class="swipe-indicator left" id="indLeft">←</div>
+<div class="swipe-indicator right" id="indRight">→</div>
+
+<!-- ─── MEDIAPIPE (chargé avant script.js) ─── -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+<!-- ─── TON CODE ─── -->
+<script src="script.js"></script>
+
+</body>
+</html>
